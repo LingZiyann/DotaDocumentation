@@ -1,5 +1,144 @@
 # DotaDocumentation
 
+## Introduction
+Just a simple ReadMe for my website I made so I can remember how I designed the website and what practices I should follow
+
+## Table of Contents
+
+- [Frontend Documentation](#Frontend-Documentation)
+- [Backend Documentation](#Backend-Documentation)
+- [Database design](#Database-Design)
+
+## Frontend Documentation
+Next.js is used for SEO purposes. DaisyUI components are also used to help speed up development
+
+- **Tech Stack**: React, Next.js, Tailwind CSS, DaisyUI
+
+## Libraries Used
+- **`nivo-charts`**: Used to create interactive and customizable charts to visualize Dota 2 statistics and performance metrics. Provides a variety of chart types with responsive and interactive features.
+- **`dota2-hero-sprites`**: Utilized to integrate high-resolution hero sprites into the application
+
+
+## Project Structure
+
+### File and Folder Organization
+
+- **/components**: Contains all reusable UI components.
+  - **/Charts**: Contains charts components used for analysis.
+  - **/herocounters**: Contains components used for herocounters section.
+  - **/overview**: Contains components used for Profile overview page.
+  - **/misc**: Contains misc card/row components.
+
+- **/app**: Contains the main pages of the application.
+  - **/builds**: Contains the builds page and builds specific components.
+  - **/counters**: Contains the counters page and counters specific components.
+  - **/items**: Contains the items page and items specific components.
+  - **/neutrals**: Contains the neutrals page and neutrals specific components.
+  - **/profile**: Contains the profile page and profile specific components.
+  - **/synergy**: Contains the synergy page and synergy specific components.
+
+- **/public**: Contains the images and svgs needed for the project.
+
+- **/utils**: Contains necessary utility functions needed for certain calculation/hero name finder.
+
+- **/dota2-herosprites**: Contains necessary files needed for using the dota hero image sprites.
+
+
+## Optimization 
+
+### Performance Optimization
+- **Total Blocking Time (TBT)**: Reduce unnecessary javascript and calculations
+- **Cumulative Layout Shift (CLS)**: Measures to prevent unexpected layout shifts. Ensure containers have fixed widths or predefined dimensions to avoid layout changes while data is being loaded
+- **Code Splitting**: Use of code splitting for faster load times, especially in analysis portion where numerous data will be fetched from server side, certain data can be fetch asynchronously in the client side with code splitting.
+- **Cache**: Use Nextjs' inbuilt cache mechanism
+- **Image optimzation**: Item images are currently served from a CDN (from steam) while other images should be wrapped around Nextjs' Image component
+- **Static Site Generation (SSG)**: Use SSG to pre-render pages at build time, the data on the page isn't dynamic
+
+### Data Fetching Strategies
+- **Server Component Wrapping**: Wrap all client components in a server component where HTTP requests are fired off to fetch data from the database. By consolidating data fetching into server components, you can leverage server-side rendering (SSR) to pre-fetch data before sending the page to the client. This reduces client-side load and speeds up the initial page load.
+
+
+### Semantic HTML
+- **Usage of Semantic Tags**: Use of `<header>`, `<footer>`, `<nav>`, `section` etc.
+
+### Performance Testing
+- **Tools**: Lighthouse for core web vitals testing
+
+
+
+## Backend-Documentation
+
+### Overview
+The backend of the DotaRecaps application is built to handle user requests, process data, and manage interactions with the database. 
+As of now it is currently built using Nextjs. In the future, it ought to be replaced by ExpressJS and also using Reddis for caching
+
+### Tech Stack
+- **Languages**: JavaScript (Node.js)
+- **Frameworks**: Next.js
+- **Databases**: Supabase
+- **API design**: RESTful
+
+<!-- ### Architecture
+- **High-Level Architecture**: [Diagram showing API servers, database, and caching layers]
+- **Components**: Includes an API server, authentication service, and data storage.
+- **Data Flow**: Data is processed through API requests, validated, and then stored in PostgreSQL. -->
+### Scripts File and Folder Organization
+- **/scripts**: Contains scripts for complex data retrieval.
+  - **test.js**: Script for executing all scripts required to daily data retrieval.
+  - **/herocounters**: Contains scripts for fetching data related to matchups and synergies.
+    - **`fetchHeroID.js`**: Retrieves data related to Heroes and their descriptions.
+    - **`fetchTierList.js`**: Retrieves data related to hero stats.
+    - **`fetchVSHerostats.js`**: Retrieves data related to hero matchups in general.
+    - **`fetchVSLanestats.js`**: Retrieves data related to hero matchups in lane.
+    - **`fetchWITHHerostats.js`**: Retrieves data related to hero synergies in general.
+    - **`fetchWITHLanestats.js`**: Retrieves data related to hero synergies in lane.
+
+  - **/items**:  Contains scripts for fetching data related to builds, items and neutral items statistics.
+    - **`fetchItems.js`**: Retrieves data related to hero matchups, including counters and synergies.
+
+  - **/lastpatch**: Scripts for fetching data related to items from last patch.
+    - **`fetchItemsLP.js`**: Retrieves data related to hero matchups, including counters and synergies.
+
+  - **/profile**: Scripts for fetching data for profile analysis uses.
+    - **`fetchdata.js`**: Retrieves data related to profile analysis script 1.
+    - **`fetchdata2.js`**: Retrieves data related to profile analysis script 2.
+    - **`fetchEnemyStats.js`**: Retrieves data related to the user's enemies stats performance.
+    - **`fetchHeroData.js`**: Retrieves data related to user's heroes stats performance script 1.
+    - **`fetchMyAvgData.js`**: Retrieves data related to user's heroes stats performance script 2.
+    - **`fetchWardData.js`**: Retrieves data related to the user's ward data.
+
+## Data Processing and Optimization Practices
+
+### Data Processing Techniques
+
+- **Pre-Processing**: Initial data preparation to ensure data is clean and properly formatted before further processing.
+- **Batch Processing**: Use batch processing to efficiently handle bulk data insertion, so as to reduce the amount of database transactions done, significantly reducing processing time.
+- **Asynchronous Operations**: Use asynchronous operations to perform concurrent tasks, so as to insert/fetch data faster.
+
+### Optimization Strategies
+
+- **Caching**: Use Nextjs' in-built cache system.
+- **Rate Limiting**: Configure rate limiting to manage API usage and prevent abuse, ensuring platform stability and reliability.
+
+### API Design
+  - All API endpoints are secured and require a valid access token to access. The access token must be included in the `Authorization` header of the request. This token is validated to ensure that only authorized users can access or modify data.
+
+
+
+<!-- ### Security
+- **Encryption**: SSL/TLS is used to encrypt data transmitted between the client and server.
+- **Authorization**: Role-based access control (RBAC) for managing user permissions.
+- **Vulnerability Management**: Regular security audits and updates to address vulnerabilities. -->
+
+<!-- ### Deployment
+- **Infrastructure**: Deployed on AWS using EC2 instances.
+- **CI/CD**: Implemented CI/CD pipelines with GitHub Actions for automated testing and deployment.
+- **Monitoring and Logging**: Utilized Prometheus for monitoring and ELK Stack for logging.
+
+### Testing
+- **Unit Testing**: Jest is used for unit testing individual components.
+- **Integration Testing**: Postman for testing API endpoints.
+- **End-to-End Testing**: Cypress for end-to-end testing of user interactions. -->
 
 
 ## Database Design
@@ -35,19 +174,19 @@ This database is actually seperated from the other 2 DBs as initially this DB wa
 
 **Table:** `vsHeroStats`
 
-- **Purpose:** Captures matchups between heroes for the entire game length.
+- **Purpose:** Captures matchups between 2 `Hero` for the entire game length.
 
 **Table:** `withHeroStats`
 
-- **Purpose:** Captures synergies between heroes for the entire game length.
+- **Purpose:** Captures synergies between 2 `Hero` for the entire game length.
 
 **Table:** `vsLaneStats`
 
-- **Purpose:** Captures matchups between heroes in the laning phase.
+- **Purpose:** Captures matchups between 2 `Hero` in the laning phase.
 
 **Table:** `withLaneStats`
 
-- **Purpose:** Captures synergies between heroes in the laning phase.
+- **Purpose:** Captures synergies between 2 `Hero` in the laning phase.
 
 **Note** vsHeroStats/withHeroStats were seperated into 2 different table instead of combining to 1 as it better represents how the data is used in the website. For example withHeroStats data wont ever be combined with vsHeroStats data and they both have their own seperate table in the website
 
@@ -79,7 +218,7 @@ This table mainly stores 2 things, the many-to-many relationship between a Hero 
 
 **Table:** `Hero`
 
-- **Purpose:** Represents a Hero entity.
+- **Purpose:** Represents a `Hero` entity.
 
 **Table:** `Item`
 
@@ -91,35 +230,35 @@ This table mainly stores 2 things, the many-to-many relationship between a Hero 
 
 **Table:** `ItemStats`
 
-- **Purpose:** Captures how well a hero performs when a item is bought at a specific timing.
+- **Purpose:** Captures how well a `Hero` performs when a item is bought at a specific timing.
 
 **Table:** `NeutralItemStats`
 
-- **Purpose:** Captures how well a hero performs when a neutral item is bought at a specific timing.
+- **Purpose:** Captures how well a `Hero` performs when a neutral item is bought at a specific timing.
 
 **Table:** `LastPatchHero`
 
-- **Purpose:** Represents a Hero entity but from the previous patch.
+- **Purpose:** Represents a `Hero` entity but from the previous patch.
 
 **Table:** `LastPatchItemStats`
 
-- **Purpose:** Captures how well a hero performs when a item is bought at a specific timing for previous patch.
+- **Purpose:** Captures how well a `Hero` performs when a item is bought at a specific timing for previous patch.
 
 **Table:** `LastPatchNeutralStats`
 
-- **Purpose:** Captures how well a hero performs when a neutral item is bought at a specific timing for previous patch.
+- **Purpose:** Captures how well a `Hero` performs when a neutral item is bought at a specific timing for previous patch.
 
 **Table:** `LaneHeroStats`
 
-- **Purpose:** Captures the average laning stats of a hero and rank. Used for comparing with user's performance.
+- **Purpose:** Captures the average laning stats of a `Hero` and rank. Used for comparing with user's performance.
 
 **Table:** `HeroStats`
 
-- **Purpose:** Captures the average game stats of a hero and rank. Used for comparing with user's performance.
+- **Purpose:** Captures the average game stats of a `Hero` and rank. Used for comparing with user's performance.
 
 **Table:** `Rank`
 
-- **Purpose:** Rank table serves as a look-up table. Each combination of hero_id + position in HeroStats and LaneHeroStats has a field rank_id. Helps to maintain data integrity and ease of change in future
+- **Purpose:** Rank table serves as a look-up table. Each combination of hero_id + position in `HeroStats` and `LaneHeroStats` has a field `rank_id`. Helps to maintain data integrity and ease of change in future
 
 ### Portion 3: DotaRecaps Profile analysis 
 
@@ -242,8 +381,4 @@ Indexes will play a crucial role in optimizing the performance, especially for t
 
 **Table:** `LaneOutcome`
 - **Index:** A Composite Non-Clustered Index on `(userhero_id, lane, is_victory, is_my_lane)` supports complex queries filtering on these conditions.
-
-### **Additional Notes**
-- Regularly review and optimize your indexes based on actual query performance and usage patterns.
-- Consider the trade-off between read and write performance when deciding whether to apply an index to a table.
 
