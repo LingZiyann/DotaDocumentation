@@ -121,9 +121,129 @@ This table mainly stores 2 things, the many-to-many relationship between a Hero 
 
 - **Purpose:** Rank table serves as a look-up table. Each combination of hero_id + position in HeroStats and LaneHeroStats has a field rank_id. Helps to maintain data integrity and ease of change in future
 
-### Portion 2: DotaRecaps Profile analysis 
+### Portion 3: DotaRecaps Profile analysis 
 
 ![HeroCounters ERD](dotarecaps2.jpg)
 
 ### Overview
-This section includes tables meant for storing a user's hero analysis data. Since there are many tables and mainly self-explanatory i shall not note it down here one by one(for now)
+This section includes tables meant for storing a user personal analysis data. There is mainly 2 sections here, one portion is the data for the 'profile overview' analysis, while the other section is the data for the 'hero analysis'.
+
+### Tables
+
+**Table:** `User`
+
+- **Purpose:** Represents a User(Person who uses our website) entity.
+
+**Table:** `TopHero` (For profile analysis)
+
+- **Purpose:** Stores the Top heroes the user has used (Each user will have 3 top heroes).
+
+**Table:** `ProfileStat` (For profile analysis)
+
+- **Purpose:** Stores the profile analysis data needed.
+
+**Table:** `PositionStats` (For profile analysis)
+
+- **Purpose:** Stores the data of how well a User has performed on each posiitons.
+
+**Table:** `Ability`
+
+- **Purpose:** Stores the data of a ability.
+
+**Table:** `UserHero`
+
+- **Purpose:** Represents a hero analysed by a User.
+
+**Table:** `HeroMatchStat`
+
+- **Purpose:** Captures general performance stats of a `UserHero`.
+
+**Table:** `HeroLaneStat`
+
+- **Purpose:** Captures laning performance stats of a `UserHero`
+
+**Table:** `MatchUp`
+
+- **Purpose:** Captures the matchup, both enemy and ally, performance of a `UserHero`.
+
+**Table:** `FarmDistribution`
+
+- **Purpose:** Captures the Farm distribution data of a `UserHero`.
+
+**Table:** `KDALocation`
+
+- **Purpose:** Stores the data of where a `UserHero` got kills/deaths/assists.
+
+**Table:** `WardLocation`
+
+- **Purpose:** Stores the ward data of a `UserHero`, specifically location of wards placed by enemy and also by `UserHero`
+
+**Table:** `AbilitiesUsed`
+
+- **Purpose:** Stores the data of the abilities used by a `UserHero`.
+
+**Table:** `MatchOutcome`
+
+- **Purpose:** Shows the match outcome types for a `UserHero`.
+
+**Table:** `LaneOutcome`
+
+- **Purpose:** Shows the lane outcome types for a `UserHero`, including allies' lane outcomes.
+
+**Table:** `Event`
+
+- **Purpose:** Captures events data for a `UserHero`
+
+**Table:** `WardStat`
+
+- **Purpose:** Stores the warding data statistics for a `UserHero`.
+
+**Table:** `ItemPurchased`
+
+- **Purpose:** Stores the data of all ItemPurchased by a `UserHero`.
+
+**Table:** `DamageDistribution`
+
+- **Purpose:** Shows the type of damage recieved/dealt by a `UserHero`.
+
+## Indexes
+
+Indexes will play a crucial role in optimizing the performance, especially for the analysis portion, where large volumes of data are fetched for a single Hero analysis. The indexing strategy differs based on the use case:
+
+- **Profile Analysis:** Non-Clustered Indexes are essential here due to the high volume of data retrieval and rare write operations.
+- **Items and HeroCounters:** Non-Clustered indexes are avoided because these tables undergo frequent write operations during daily data fetching, while reads are minimal (static site generation is used).
+
+### **Indexing Strategy**
+
+- **Considerations:** 
+  - When creating Composite Indexes (both Clustered and Non-Clustered), prioritize indexing fields used for equality conditions before range conditions.
+  - Focus on highly selective fields first to quickly narrow down query results. In general, `steam_id > hero_id > position/role` is the preferred order.
+  - The order of columns in composite indexes matters, depending on how you are querying it. 
+
+### **Indexes Used**
+
+**Table:** `UserHero`
+- **Index:** A Composite Index on `(steam_id, hero_id)` supports efficient JOIN and WHERE queries. Since a Surrogate key is used, this index is particularly valuable.
+
+**Table:** `MatchUp`
+- **Index:** A Clustered Index on `(userhero_id, is_ally, hero_id2)` improves WHERE queries involving `is_ally` and `hero_id2`. Note: The usefulness of including `hero_id2` will be evaluated over time.
+
+**Table:** `KDALocation`
+- **Index:** A Non-Clustered Index on `(userhero_id)` supports JOIN queries, given the use of a Surrogate key.
+
+**Table:** `WardLocation`
+- **Index:** Similar to `KDALocation`, a Non-Clustered Index on `(userhero_id)` assists with JOIN queries.
+
+**Table:** `AbilitiesUsed`
+- **Index:** A UNIQUE CONSTRAINT on `(userhero_id, is_victory, ability_id)` automatically generates an index, which can be leveraged for performance.
+
+**Table:** `MatchOutcome`
+- **Index:** A Composite Clustered Index on `(userhero_id, is_victory)` optimizes WHERE queries involving `is_victory`.
+
+**Table:** `LaneOutcome`
+- **Index:** A Composite Non-Clustered Index on `(userhero_id, lane, is_victory, is_my_lane)` supports complex queries filtering on these conditions.
+
+### **Additional Notes**
+- Regularly review and optimize your indexes based on actual query performance and usage patterns.
+- Consider the trade-off between read and write performance when deciding whether to apply an index to a table.
+
